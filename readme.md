@@ -7,7 +7,7 @@
 This project is a forum with a theme based around venting, whether that be about programming or just life. The page will have a social media style display to give users a familiar feel.  This forum project is a three-person group project and each person gets assigned a specific task  to work on.
 
 
-<a href="https://compassionate-ritchie-5e01af.netlify.app/">Live link</a>
+<a href="https://penguin-project-3-backend.herokuapp.com/">Live link</a>
 
 ### Technologies used
 
