@@ -31,25 +31,22 @@ mongoose.connection
   .on('close', () => console.log('You are disconnected from Mongo'))
   .on('error', error => console.log(error))
 
-// ////////////////////////////
-// Models
-// ////////////////////////////
-// The forum  schema
-const ForumSchema = new mongoose.Schema(
+/*          MONGOOSE            */
+const MessageSchema = new mongoose.Schema(
   {
     userName: String,
+    image: String,
     about: String,
-    date: Date,
+    date: String,
     time: String,
     message: String,
     url: String,
     startRating: Number
-
   },
   { timestamps: true }
 )
-// Creating the forum model
-const Messages = mongoose.model('Messages', ForumSchema)
+
+const Message = mongoose.model('Message', MessageSchema)
 
 // ///////////////////////////////
 // Middleware
@@ -65,47 +62,41 @@ app.use(express.json()) // Parsing json bodies
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+// Index route
+app.get('/forum', async (req, res) => {
+  try {
+    res.json(await Message.find({}))
+  } catch (error) {
+    res.status(400).json(error)
+  }
+})
 
-// Forum index route
-// Getting request to /forum messages, returning them all as json
-app.get('/messages', async (req, res) => {
+// Create route
+app.post('/forum', async (req, res) => {
   try {
-    // Sending all forum messages
-    res.json(await Messages.find({}))
+    res.json(await Message.create(req.body))
   } catch (error) {
-    res.status(400).json({ error })
+    res.status(400).json(error)
   }
 })
-//  Forum create route
-// Posting request to /forum, using request body to make new forum messages
-app.post('/messages', async (req, res) => {
+
+// Update route
+app.put('/forum/:id', async (req, res) => {
+  const id = req.params.id
   try {
-    // Creating a new forum message
-    res.json(await Messages.create(req.body))
+    res.json(await Message.findByIdAndUpdate(id, req.body, { new: true }))
   } catch (error) {
-    res.status(400).json({ error })
+    res.status(400).json(error)
   }
 })
-// Forum update  route
-// Putting request /message/:id, updates messages based on id with request body
-app.put('/messages/:id', async (req, res) => {
+
+// Destroy route
+app.delete('/forum/:id', async (req, res) => {
+  const id = req.params.id
   try {
-    // Updating a message
-    res.json(
-      await Messages.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    )
+    res.json(await Message.findByIdAndRemove(id))
   } catch (error) {
-    res.status(400).json({ error })
-  }
-})
-// Destroy Route
-// Deleting request to /message/:id, deletes messages specified
-app.delete('/messages/:id', async (req, res) => {
-  try {
-    // Deleting a message
-    res.json(await Messages.findByIdAndRemove(req.params.id))
-  } catch (error) {
-    res.status(400).json({ error })
+    res.status(400).json(error)
   }
 })
 
